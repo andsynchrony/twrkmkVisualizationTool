@@ -8,6 +8,7 @@ AudioHandler audio;
 
 // visualizations
 ProtoClass circles;
+Polyscape polyscape;
 
 
 void setup() { 
@@ -35,6 +36,7 @@ void setup() {
 
   // visualizations
   circles = new ProtoClass();
+  polyscape = new Polyscape(width, height);
 }
 
 void draw() { 
@@ -42,7 +44,8 @@ void draw() {
 
   audio.update();
 
-  circles.draw( canvas, audio.getAverage() );
+  //circles.draw( canvas, audio.getAverage() );
+  polyscape.draw( canvas, audio.getVolume() );
   image(canvas, 0, 0);
 
   server.sendImage(canvas);
