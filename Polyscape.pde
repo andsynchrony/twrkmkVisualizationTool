@@ -3,8 +3,8 @@ class Polyscape
   PShape scape;
   float size_x;
   float size_y;
-  int segments_x = 50;
-  int segments_y = 36;
+  int segments_x = 36;
+  int segments_y = 26;
   float scale = 28.0;
 
   float[][] vertices;
@@ -42,12 +42,12 @@ class Polyscape
     {
       if(i == 0)
       {
-         updateArea(1.0, values[i]*2.0, segments_x/2, segments_y/2, 16);
+         updateArea(1.0, values[i]*5.0, segments_x/2, segments_y/2, 16);
       }
       else 
       {
         randomSeed(i);
-        updateArea(2.0, values[i]*2.0, int(random(0,segments_x)), int(random(0,segments_y)), 6);
+        updateArea(random(0,4), values[i]*2.0, int(random(segments_x)), int(random(segments_y)), 7);
 
       }
     }

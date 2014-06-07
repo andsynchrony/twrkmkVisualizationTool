@@ -93,7 +93,7 @@ class AudioHandler
     {
           for (int p = 0; p < portAudio; p++)
         {
-          volume[p] = noise(frameCount*0.02, p) * 100;
+          volume[p] = noise(p, frameCount*0.02) * 100;
         }
         for (int p = 0; p < portAudio; p++)
         {

@@ -13,7 +13,7 @@ Polyscape polyscape;
 
 void setup() { 
 
-  size(1440, 900, P3D); 
+  size(1024, 768, P3D); 
 
   audio = new AudioHandler(8, true); // num 
 
