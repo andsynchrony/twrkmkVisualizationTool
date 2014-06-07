@@ -3,8 +3,8 @@ class Polyscape
   PShape scape;
   float size_x;
   float size_y;
-  int segments_x = 30;
-  int segments_y = 19;
+  int segments_x = 50;
+  int segments_y = 36;
   float scale = 28.0;
 
   float[][] vertices;
@@ -34,11 +34,26 @@ class Polyscape
     }
   }
 
-  void draw(PGraphics canvas, float[] average)
+  void draw(PGraphics canvas, float[] values)
   {
     updateScape();
-    updateArea(90.0, segments_x * mouseX/width, segments_y * mouseY/height, 4);
-    updateArea(60.0, segments_x/2, segments_y/2, 16);
+    
+    for(int i = 0; i < values.length; i++)
+    {
+      if(i == 0)
+      {
+         updateArea(1.0, values[i]*2.0, segments_x/2, segments_y/2, 16);
+      }
+      else 
+      {
+        randomSeed(i);
+        updateArea(2.0, values[i]*2.0, int(random(0,segments_x)), int(random(0,segments_y)), 6);
+
+      }
+    }
+    
+    //updateArea(2.0, 200.0, segments_x * mouseX/width, segments_y * mouseY/height, 6);
+    //updateArea(1.0, 200.0, segments_x/2, segments_y/2, 16);
 
     canvas.beginDraw();
     canvas.background(0);
@@ -93,17 +108,16 @@ class Polyscape
     }
   }
 
-  void updateArea(float amplitude, int cX, int cY, int radius)
+  void updateArea(float speed, float amplitude, int cX, int cY, int radius)
   {
     for (int y = max (0, cY - radius); y < min(cY + radius, segments_y); y++)
     {
       for (int x = max (0, cX - radius); x < min(cX + radius, segments_x); x++)
       {
         float[] f = vertices[x + y * segments_x];
-        float factor = 1.0 - dist(cX, cY, x, y)/(radius*0.7);
-        println(factor);
-        f[2] *= max(0.0, 0.8 - factor);
-        f[2] += sin(frameCount*0.02) * amplitude * factor;
+        float factor = map(dist(cX, cY, x, y), 0, radius*1.4, 1.0, 0.0) * (sin( -frameCount * speed * 0.02 + PI * dist(cX, cY, x, y)/(radius*0.5) )*0.5 + 0.5);
+        f[2] *= max(0.0, 1.0 - factor);
+        f[2] += amplitude * factor;
       }
     }
   }
