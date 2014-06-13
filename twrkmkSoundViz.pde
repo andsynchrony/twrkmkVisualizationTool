@@ -10,15 +10,16 @@ AudioHandler audio;
 ProtoClass circles;
 Polyscape polyscape;
 Branches branches;
+ChrisClass chrisClass;
 
 
 void setup() { 
 
   size(1024, 768, P3D); 
 
-  audio = new AudioHandler(1, true); // num channels, debug mode on or off
+  audio = new AudioHandler(8, true); // num channels, debug mode on or off
 
-  canvas = createGraphics(width, height, P2D);
+  canvas = createGraphics(width, height, P3D);
   canvas.beginDraw();
   canvas.background(0, 0, 0);
   canvas.endDraw();
@@ -39,6 +40,8 @@ void setup() {
   circles = new ProtoClass();
   polyscape = new Polyscape(width, height);
   branches = new Branches(audio.getVolume(), width, height);
+    chrisClass = new ChrisClass();
+
 }
 
 void draw() { 
@@ -48,7 +51,7 @@ void draw() {
 
   //circles.draw( canvas, audio.getAverage() );
   //polyscape.draw( canvas, audio.getVolume() );
-  branches.draw( canvas, audio.getVolume() );
+  chrisClass.draw(canvas, audio.getVolume());
   image(canvas, 0, 0);
 
   server.sendImage(canvas);
