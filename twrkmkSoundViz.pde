@@ -16,7 +16,7 @@ void setup() {
 
   size(1024, 768, P3D); 
 
-  audio = new AudioHandler(1, true); // num 
+  audio = new AudioHandler(1, true); // num channels, debug mode on or off
 
   canvas = createGraphics(width, height, P2D);
   canvas.beginDraw();
