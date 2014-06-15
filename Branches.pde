@@ -15,7 +15,7 @@ class Branches
   {
     branches = new ArrayList();
     for (int i = 0; i < average.length; i ++) {
-      branches.add(new Branch2D(size_x/2, size_y/2, 0, 0));
+      branches.add(new Branch2D(size_x/10, 20, 0, 0));
     }
   }
 
@@ -134,12 +134,12 @@ class Spring2D {
 
     for (int i = 0; i < 50; i++) {
       canvas.fill(95, random(300, 360), random(100, 360));
-      canvas.ellipse(x+random(-20, 20), y+random(-20, 20), radius, radius);
+      canvas.rect(x+random(-20, 20), y+random(-20, 20), radius, radius);
     }
     randomSeed(round(x*2/3));
     for (int i = 0; i < 10; i++) {
       canvas.fill(0, 0, 360);
-      canvas.ellipse(x+random(-10, 10), y+random(-10, 10), radius*2, radius*2);
+      canvas.rect(x+random(-10, 10), y+random(-10, 10), radius*2, radius*2);
     }
   }
 }

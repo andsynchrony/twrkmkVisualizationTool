@@ -37,10 +37,10 @@ void setup() {
   }
 
   // visualizations
-  circles = new ProtoClass();
-  polyscape = new Polyscape(width, height);
+  //circles = new ProtoClass();
+  //polyscape = new Polyscape(width, height);
   branches = new Branches(audio.getVolume(), width, height);
-    chrisClass = new ChrisClass();
+  //chrisClass = new ChrisClass();
 
 }
 
@@ -51,7 +51,8 @@ void draw() {
 
   //circles.draw( canvas, audio.getAverage() );
   //polyscape.draw( canvas, audio.getVolume() );
-  chrisClass.draw(canvas, audio.getVolume());
+  branches.draw( canvas, audio.getVolume() );
+  //chrisClass.draw(canvas, audio.getVolume());
   image(canvas, 0, 0);
 
   server.sendImage(canvas);
