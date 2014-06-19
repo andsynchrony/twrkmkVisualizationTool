@@ -1,3 +1,5 @@
+// by Thomas Lipp
+
 class ThomasClass implements Visualization
 {
   ThomasClass()

@@ -1,3 +1,5 @@
+// by Lucas Dittebrandt
+
 class CircleClass implements Visualization
 {
   CircleClass()

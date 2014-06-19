@@ -1,3 +1,5 @@
+// by Christopher Warnow
+
 import toxi.physics.constraints.*;
 import toxi.physics.behaviors.*;
 import toxi.physics.*;

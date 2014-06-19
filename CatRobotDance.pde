@@ -1,3 +1,5 @@
+// by Simon Schweissinger
+
 import de.looksgood.ani.*;
 
 class CatRobotDance implements Visualization {
