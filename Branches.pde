@@ -6,16 +6,16 @@ class Branches
   float velX, velY;
 
 
-  Branches(float[] average, int size_x, int size_y)
+  Branches(int num, int size_x, int size_y)
   {
-    setup(average, size_x, size_y);
+    setup(num, size_x, size_y);
   }
 
-  void setup(float[] average, int size_x, int size_y)
+  void setup(int num, int size_x, int size_y)
   {
     branches = new ArrayList();
-    for (int i = 0; i < average.length; i ++) {
-      branches.add(new Branch2D(size_x/10, 20, 0, 0));
+    for (int i = 0; i < num; i ++) {
+      branches.add(new Branch2D(random(size_x/8), random(size_y/10), 0, 0));
     }
   }
 
@@ -26,8 +26,10 @@ class Branches
     canvas.background(0);
     for (int i = 0; i < branches.size (); i ++)
     {
-      velX = abs(sin(radians(average[i])*2));
-      velY = abs(cos(radians(average[i])/1.2));
+      velX = abs(sin(radians(average[i])*200));
+      velY = abs(cos(radians(average[i])/120));
+      //velX = average[i]*0.12;
+      //velY = average[i]/0.12;
       Branch2D branch = (Branch2D) branches.get(i);
       branch.generate(canvas, velX, velY);
     }

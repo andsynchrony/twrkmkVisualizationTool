@@ -40,7 +40,7 @@ class Polyscape
     
     for(int i = 0; i < values.length; i++)
     {
-      if(i == 0)
+      if(i == 2) // drums!
       {
          updateArea(1.0, values[i]*5.0, segments_x/2, segments_y/2, 16);
       }

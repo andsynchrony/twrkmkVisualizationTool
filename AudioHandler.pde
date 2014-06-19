@@ -10,6 +10,9 @@ class AudioHandler
   int buffer; 
   int portAudio;
 
+  float[] maxima, normalized, smoothed;
+
+
   AudioHandler(int numPorts, boolean debug)
   {
     this.debug = debug;
@@ -24,16 +27,21 @@ class AudioHandler
   void setup(int numPorts)
   {
     portAudio = numPorts;
+    maxima = new float[portAudio];
     volume = new float[portAudio];
     average = new float[portAudio];
+    normalized = new float[portAudio];
+    smoothed = new float[portAudio];
+
+
     for (int p = 0; p < portAudio; p++)
     {
       volume[p] = 0;
-    }
-    for (int p = 0; p < portAudio; p++)
-    {
       average[p] = 0;
+      maxima[p] = 100;
+      smoothed[p] = 0;
     }
+
     if (!debug)
     {
       println("starting audio...");
@@ -82,7 +90,19 @@ class AudioHandler
         {
           average[p] = ((average[p] * buffer) + volume[p])/(buffer + 1);
         }
+        for (int i = 0; i < maxima.length; i++)
+        {
+          if (volume[i] != 0)
+            maxima[i] += (volume[i] - maxima[i])*0.05;
+          normalized[i] = constrain(map(volume[i], 0, maxima[i], 0.0, 1.0), 0.0, 1.0);
+        }
+
+        for (int i = 0; i < smoothed.length; i++)
+        {
+          smoothed[i] += (normalized[i] - smoothed[i])*0.05;
+        }
       }
+
       catch(Throwable e)
       {
         println("AudioHandler broken: " + e);
@@ -91,14 +111,14 @@ class AudioHandler
     }
     else
     {
-          for (int p = 0; p < portAudio; p++)
-        {
-          volume[p] = noise(p, frameCount*0.02) * 100;
-        }
-        for (int p = 0; p < portAudio; p++)
-        {
-          average[p] = ((average[p] * buffer) + volume[p])/(buffer + 1);
-        }
+      for (int p = 0; p < portAudio; p++)
+      {
+        volume[p] = noise(p, frameCount*0.02) * 100;
+      }
+      for (int p = 0; p < portAudio; p++)
+      {
+        average[p] = ((average[p] * buffer) + volume[p])/(buffer + 1);
+      }
     }
   }
 
@@ -110,6 +130,15 @@ class AudioHandler
   float[] getAverage()
   {
     return average;
+  }
+
+  float[] getNormalized()
+  {
+    return normalized;
+  }
+  float[] getSmoothed()
+  {
+    return smoothed;
   }
 }
 

@@ -1,4 +1,4 @@
-void circles(float[] average) {
+void circles(PGraphics canvas, float[] average) {
   canvas.beginDraw();
 canvas.background(40);
   // draw ellipse channel 1
