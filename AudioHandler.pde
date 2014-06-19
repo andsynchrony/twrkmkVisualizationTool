@@ -133,19 +133,26 @@ class AudioHandler
       rect(30, 22 + i*35, 100 * n[i], 15);
     }
   }
-
+  
+  // volume values, as received by Beads library
   float[] getVolume()
   {
     return volume;
   }
+  
+  // average volume, unnormalized, unsmoothed
   float[] getAverage()
   {
     return average;
   }
+  
+  // normalized volume, unsmoothed
   float[] getNormalized()
   {
     return normalized;
   }
+  
+  // smoothed, normalized volume
   float[] getSmoothed()
   {
     return smoothed;
