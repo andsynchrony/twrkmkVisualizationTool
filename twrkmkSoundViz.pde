@@ -5,25 +5,21 @@ PGraphics canvas;
 int numChannels = 8;
 
 
+Visualization[] visualization;
+int visualizationID = 0;
+
 SyphonServer server;
 AudioHandler audio;
-
-// visualizations
-ProtoClass circles;
-Polyscape polyscape;
-Branches branches;
-//ThomasClass thomas;
-
 
 
 void setup() { 
 
   size(1024, 768, P3D); 
 
-  audio = new AudioHandler(numChannels, false); // num channels, debug mode on or off
+  audio = new AudioHandler(numChannels, true); // num channels, debug mode on or off
+ 
 
-
-  canvas = createGraphics(width, height, P2D);
+  canvas = createGraphics(width, height, P3D);
   canvas.beginDraw();
   canvas.background(0, 0, 0);
   canvas.endDraw();
@@ -40,12 +36,14 @@ void setup() {
     println("could not start syphon: " + e);
   }
 
-  // visualizations
-  circles = new ProtoClass();
-  //polyscape = new Polyscape(width, height) new ThomasClass();
-  //branches = new Branches(numChannels, width, height);
-  //chrisClass = new ChrisClass();
-  //thomas = new ThomasClass();
+  visualization = new Visualization[] {
+    new CircleClass(),
+    new Polyscape(width, height),
+    new ChrisClass(),
+    new ThomasClass(),
+    new Branches(numChannels, width, height),
+  };
+
 }
 
 void draw() { 
@@ -54,34 +52,27 @@ void draw() {
   audio.update();
 
 
-  circles.draw( canvas, audio.getSmoothed() );
-  //polyscape.draw( canvas, audio.getVolume() );
-  //thomas.draw( canvas, audio.getVolume() );
-  //branches.draw( canvas, audio.getVolume() );
-  //chrisClass.draw(canvas, audio.getVolume());
+  visualization[visualizationID].draw( canvas, audio.getSmoothed() );
   image(canvas, 0, 0);
 
-  debugDraw();
+  audio.drawInput();
 
   server.sendImage(canvas);
 }
 
-void debugDraw()
+
+void keyPressed()
 {
-  fill(255);
-  noStroke();
-  float[] a = audio.getVolume();
-  float[] n = audio.getNormalized();
-  for (int i = 0; i < a.length; i++)
+  int id = Integer.parseInt(key+"");
+  if(id >= 0 && id <= visualization.length)
   {
-    text(i + " " + a[i], 30, 14 + i * 35);
-    stroke(0);
-    noFill();
-    rect(30, 22 + i*35, 100, 15);
-    noStroke();
-    fill(255);
-    rect(30, 22 + i*35, 100 * n[i], 15);
+    switchVisualization(id);
+  }
+  if(key == ' ')
+  {
+    switchVisualization(visualizationID+1);
   }
 }
+
 
 

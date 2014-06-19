@@ -1,17 +1,22 @@
 
-class Branches
+class Branches implements Visualization
 {
 
   ArrayList branches;
   float velX, velY;
 
 
-  Branches(int num, int size_x, int size_y)
+  Branches(int num, float size_x, float size_y)
   {
     setup(num, size_x, size_y);
   }
 
-  void setup(int num, int size_x, int size_y)
+  void setup()
+  {
+    println("WARNING: set up with empty handler");
+  }
+
+  void setup(int num, float size_x, float size_y)
   {
     branches = new ArrayList();
     for (int i = 0; i < num; i ++) {

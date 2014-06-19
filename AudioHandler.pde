@@ -81,44 +81,57 @@ class AudioHandler
         }
         for (int p = 0; p < portAudio; p++)
         {
-          for (int i = 0; i < ac.getBufferSize(); i++)
+          for (int i = 0; i < ac.getBufferSize (); i++)
           {
             volume[p] += abs(ac.out.getValue(p, i));
           }
         }
-        for (int p = 0; p < portAudio; p++)
-        {
-          average[p] = ((average[p] * buffer) + volume[p])/(buffer + 1);
-        }
-        for (int i = 0; i < maxima.length; i++)
-        {
-          if (volume[i] != 0)
-            maxima[i] += (volume[i] - maxima[i])*0.05;
-          normalized[i] = constrain(map(volume[i], 0, maxima[i], 0.0, 1.0), 0.0, 1.0);
-        }
-
-        for (int i = 0; i < smoothed.length; i++)
-        {
-          smoothed[i] += (normalized[i] - smoothed[i])*0.05;
-        }
       }
-
       catch(Throwable e)
       {
         println("AudioHandler broken: " + e);
         debug = true;
       }
-    }
-    else
+    } else
     {
       for (int p = 0; p < portAudio; p++)
       {
-        volume[p] = noise(p, frameCount*0.02) * 100;
+        volume[p] = noise(p, frameCount*0.02 * p) * 100;
       }
-      for (int p = 0; p < portAudio; p++)
-      {
-        average[p] = ((average[p] * buffer) + volume[p])/(buffer + 1);
-      }
+    }
+
+    for (int p = 0; p < portAudio; p++)
+    {
+      average[p] = ((average[p] * buffer) + volume[p])/(buffer + 1);
+    }
+    for (int i = 0; i < maxima.length; i++)
+    {
+      if (volume[i] != 0)
+        maxima[i] += (volume[i] - maxima[i])*0.05;
+      normalized[i] = constrain(map(volume[i], 0, maxima[i], 0.0, 1.0), 0.0, 1.0);
+    }
+
+    for (int i = 0; i < smoothed.length; i++)
+    {
+      smoothed[i] += (normalized[i] - smoothed[i])*0.05;
+    }
+  }
+
+  void drawInput()
+  {
+    fill(255);
+    noStroke();
+    float[] a = audio.getVolume();
+    float[] n = audio.getNormalized();
+    for (int i = 0; i < a.length; i++)
+    {
+      text(i + " " + nfc(a[i], 2), 30, 14 + i * 35);
+      stroke(0);
+      noFill();
+      rect(30, 22 + i*35, 100, 15);
+      noStroke();
+      fill(255);
+      rect(30, 22 + i*35, 100 * n[i], 15);
     }
   }
 
@@ -126,12 +139,10 @@ class AudioHandler
   {
     return volume;
   }
-
   float[] getAverage()
   {
     return average;
   }
-
   float[] getNormalized()
   {
     return normalized;

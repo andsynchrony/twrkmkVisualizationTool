@@ -1,4 +1,4 @@
-class Polyscape
+class Polyscape implements Visualization
 {
   PShape scape;
   float size_x;
@@ -11,10 +11,15 @@ class Polyscape
 
   Polyscape(float size_x, float size_y)
   {
-    setup(size_x, size_y);
+    setup(0, size_x, size_y);
   }
 
-  void setup(float size_x, float size_y)
+  void setup()
+  {
+    println("WARNING: set up with empty handler");
+  }
+
+  void setup(int num, float size_x, float size_y)
   {
     this.size_x = size_x;
     this.size_y = size_y;
@@ -37,21 +42,19 @@ class Polyscape
   void draw(PGraphics canvas, float[] values)
   {
     updateScape();
-    
-    for(int i = 0; i < values.length; i++)
+
+    for (int i = 0; i < values.length; i++)
     {
-      if(i == 2) // drums!
+      if (i == 2) // drums!
       {
-         updateArea(1.0, values[i]*5.0, segments_x/2, segments_y/2, 16);
-      }
-      else 
+        updateArea(1.0, values[i]*5.0, segments_x/2, segments_y/2, 16);
+      } else 
       {
         randomSeed(i);
-        updateArea(random(0,4), values[i]*2.0, int(random(segments_x)), int(random(segments_y)), 7);
-
+        updateArea(random(0, 4), values[i]*2.0, int(random(segments_x)), int(random(segments_y)), 7);
       }
     }
-    
+
     //updateArea(2.0, 200.0, segments_x * mouseX/width, segments_y * mouseY/height, 6);
     //updateArea(1.0, 200.0, segments_x/2, segments_y/2, 16);
 

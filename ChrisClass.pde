@@ -8,7 +8,7 @@ import penner.easing.*;
 import java.util.Iterator;
 import java.util.Calendar;
 
-class ChrisClass
+class ChrisClass implements Visualization
 {
 
   // ------ mouse interaction ------
@@ -35,6 +35,11 @@ class ChrisClass
   ChrisClass()
   {
     setup();
+  }
+  
+  void setup(int num, float size_x, float size_y)
+  {
+    println("WARNING: set up with empty handler");
   }
 
   void setup()
