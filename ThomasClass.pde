@@ -68,19 +68,19 @@ class ThomasClass implements Visualization
 
     canvas.fill(0, 0);
     canvas.rectMode(CENTER);
-
+/*
     for (int k = 0; k < average[1]*faktor; k+=1)
     {
       canvas.ellipse(572, 294, average[4]*k*faktor, average[4]*k*faktor);
     }    
-
+*/
 
     // rotating bars
     canvas.pushMatrix();
 
     canvas.translate(width/2, height/2);
     canvas.rotate(radians(average[5]*faktor));
-
+/*
     for (int l = -height/2; l < height/2; l+=average[6]/5*faktor)
     {
 
@@ -88,7 +88,7 @@ class ThomasClass implements Visualization
       canvas.strokeWeight(average[7]/30*faktor);
       canvas.line(l, -height/2, l, height/2);
     }
-
+*/
     canvas.popMatrix();
 
 

@@ -4,6 +4,8 @@ PGraphics canvas;
 
 int numChannels = 8;
 
+boolean setDrawDebug = true;
+
 
 Visualization[] visualization;
 int visualizationID = 0;
@@ -56,7 +58,8 @@ void setup() {
     visualization[visualizationID].draw( canvas, audio.getSmoothed() );
     image(canvas, 0, 0);
 
-    audio.drawInput();
+    if (setDrawDebug)
+      audio.drawInput();
 
     server.sendImage(canvas);
   }
@@ -78,7 +81,9 @@ void keyPressed()
   if (key == ' ')
   {
     switchVisualization(visualizationID+1);
+  } else if (key == 'd')
+  {
+    setDrawDebug = !setDrawDebug;
   }
 }
-
 

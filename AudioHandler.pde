@@ -121,11 +121,10 @@ class AudioHandler
   {
     fill(255);
     noStroke();
-    float[] a = audio.getVolume();
-    float[] n = audio.getNormalized();
-    for (int i = 0; i < a.length; i++)
+    float[] n = getNormalized();
+    for (int i = 0; i < portAudio; i++)
     {
-      text(i + " " + nfc(a[i], 2), 30, 14 + i * 35);
+      text(i + " " + nfc(n[i], 2), 30, 14 + i * 35);
       stroke(0);
       noFill();
       rect(30, 22 + i*35, 100, 15);

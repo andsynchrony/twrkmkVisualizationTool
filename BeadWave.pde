@@ -57,7 +57,7 @@ class BeadWave implements Visualization
 
     for (int i = 0; i < channels; i++) {
       for (int k = 0; k < mod; k++) {
-        w[i + k * channels].calcWave(average[i]);
+        w[i + k * channels].calcWave(average[i]*100.0);
         w[i + k * channels].renderWave(canvas);
       }
     }
