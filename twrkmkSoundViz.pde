@@ -40,9 +40,9 @@ void setup() {
 
   visualization = new Visualization[] {
     new CircleClass(), 
-    new Polyscape(width, height), 
-    new ChrisClass(), 
     new ThomasClass(), 
+    new ChrisClass(), 
+    new Polyscape(width, height),
     new Branches(numChannels, width, height), 
     new BeadWave(this), 
     new CatRobotDance(this)
@@ -54,8 +54,8 @@ void setup() {
 
     audio.update();
 
-
-    visualization[visualizationID].draw( canvas, audio.getSmoothed() );
+    visualization[visualizationID].draw(canvas, audio.getSmoothed());
+    
     image(canvas, 0, 0);
 
     if (setDrawDebug)
@@ -75,9 +75,7 @@ void keyPressed()
       switchVisualization(id);
     }
   } 
-  catch(Exception e)
-  {
-  }
+  catch(Exception e){}
   if (key == ' ')
   {
     switchVisualization(visualizationID+1);

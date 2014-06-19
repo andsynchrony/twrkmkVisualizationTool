@@ -1,3 +1,4 @@
+// branches visualization by stefan wagner (andsynchrony)
 
 class Branches implements Visualization
 {

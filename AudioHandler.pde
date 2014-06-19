@@ -113,7 +113,7 @@ class AudioHandler
 
     for (int i = 0; i < smoothed.length; i++)
     {
-      smoothed[i] += (normalized[i] - smoothed[i])*0.05;
+      smoothed[i] += (normalized[i] - smoothed[i])*0.1;
     }
   }
 
@@ -121,7 +121,7 @@ class AudioHandler
   {
     fill(255);
     noStroke();
-    float[] n = getNormalized();
+    float[] n = getSmoothed();
     for (int i = 0; i < portAudio; i++)
     {
       text(i + " " + nfc(n[i], 2), 30, 14 + i * 35);

@@ -1,3 +1,5 @@
+// polyscape visualization by stefan wagner (andsynchrony)
+
 class Polyscape implements Visualization
 {
   PShape scape;
