@@ -17,7 +17,7 @@ void setup() {
   size(1024, 768, P3D); 
 
   audio = new AudioHandler(numChannels, true); // num channels, debug mode on or off
- 
+
 
   canvas = createGraphics(width, height, P3D);
   canvas.beginDraw();
@@ -37,42 +37,48 @@ void setup() {
   }
 
   visualization = new Visualization[] {
-    new CircleClass(),
-    new Polyscape(width, height),
-    new ChrisClass(),
-    new ThomasClass(),
-    new Branches(numChannels, width, height),
-  };
+    new CircleClass(), 
+    new Polyscape(width, height), 
+    new ChrisClass(), 
+    new ThomasClass(), 
+    new Branches(numChannels, width, height), 
+    new BeadWave(this), 
+    new CatRobotDance(this)
+    };
+  }
 
-}
+  void draw() { 
+    background(0);
 
-void draw() { 
-  background(0);
-
-  audio.update();
+    audio.update();
 
 
-  visualization[visualizationID].draw( canvas, audio.getSmoothed() );
-  image(canvas, 0, 0);
+    visualization[visualizationID].draw( canvas, audio.getSmoothed() );
+    image(canvas, 0, 0);
 
-  audio.drawInput();
+    audio.drawInput();
 
-  server.sendImage(canvas);
-}
+    server.sendImage(canvas);
+  }
 
 
 void keyPressed()
 {
-  int id = Integer.parseInt(key+"");
-  if(id >= 0 && id <= visualization.length)
+  try
   {
-    switchVisualization(id);
+    int id = Integer.parseInt(key+"");
+    if (id >= 0 && id <= visualization.length)
+    {
+      switchVisualization(id);
+    }
+  } 
+  catch(Exception e)
+  {
   }
-  if(key == ' ')
+  if (key == ' ')
   {
     switchVisualization(visualizationID+1);
   }
 }
-
 
 

@@ -19,6 +19,11 @@ class Polyscape implements Visualization
     println("WARNING: set up with empty handler");
   }
 
+  void setup(PApplet parent)
+  {
+    println("WARNING: set up with empty handler");
+  }
+
   void setup(int num, float size_x, float size_y)
   {
     this.size_x = size_x;
@@ -47,11 +52,11 @@ class Polyscape implements Visualization
     {
       if (i == 2) // drums!
       {
-        updateArea(1.0, values[i]*5.0, segments_x/2, segments_y/2, 16);
+        updateArea(1.0, values[i]*500.0, segments_x/2, segments_y/2, 16);
       } else 
       {
         randomSeed(i);
-        updateArea(random(0, 4), values[i]*2.0, int(random(segments_x)), int(random(segments_y)), 7);
+        updateArea(random(0, 4), values[i]*200.0, int(random(segments_x)), int(random(segments_y)), 7);
       }
     }
 

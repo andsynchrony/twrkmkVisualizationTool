@@ -19,6 +19,11 @@ class ThomasClass implements Visualization
     // setup stuff comes here (image loading etc)
   }
 
+  void setup(PApplet parent)
+  {
+    println("WARNING: set up with empty handler");
+  }
+
   void draw(PGraphics canvas, float[] average)
   {
     // drawing stuff comes here (image loading etc)

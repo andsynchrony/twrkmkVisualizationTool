@@ -14,6 +14,11 @@ class CircleClass implements Visualization
     println("WARNING: set up with empty handler");
   }
 
+  void setup(PApplet parent)
+  {
+    println("WARNING: set up with empty handler");
+  }
+
   void draw(PGraphics canvas, float[] average)
   {
     canvas.beginDraw();

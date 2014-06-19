@@ -36,8 +36,13 @@ class ChrisClass implements Visualization
   {
     setup();
   }
-  
+
   void setup(int num, float size_x, float size_y)
+  {
+    println("WARNING: set up with empty handler");
+  }
+
+  void setup(PApplet parent)
   {
     println("WARNING: set up with empty handler");
   }
@@ -49,7 +54,7 @@ class ChrisClass implements Visualization
     particles = new Drole[particleAmount];
 
     // create particles
-    for (int i=0;i<NUM_PARTICLES;i++) {
+    for (int i=0; i<NUM_PARTICLES; i++) {
       particles[i] = new Drole(new PVector(random(-3.1414, 3.1414), random(-3.1414, 3.1414), random(-3.1414, 3.1414)), sphereSize, i);
     }
 
@@ -91,9 +96,9 @@ class ChrisClass implements Visualization
   {
     // update pensee images
     penseeA.update();
-    if(frameCount > 100) penseeB.update();
-    if(frameCount > 200) penseeC.update();
-    
+    if (frameCount > 100) penseeB.update();
+    if (frameCount > 200) penseeC.update();
+
     // println(frameRate);
     // update particle movement
     head.set(noise(frameCount*(.005 + cos(frameCount*.001)*.005))*width-width/2, noise(frameCount*.005 + cos(frameCount*.001)*.005)*height-height/2, noise(frameCount*.01 + 100)*width-width/2);
@@ -106,35 +111,35 @@ class ChrisClass implements Visualization
     physics.update();
     // then all particles as dots
     int index=0;
-    for (Iterator i=physics.particles.iterator(); i.hasNext();) {
+    for (Iterator i=physics.particles.iterator (); i.hasNext(); ) {
       VerletParticle p=(VerletParticle)i.next();
       particles[index++].addPosition(p.x, p.y, p.z);
     }
-    
+
     canvas.beginDraw();
     canvas.background(0);
     canvas.lights();
-  
+
     canvas.pushMatrix();
-    
+
     zoom = 400 + average[0]*200;
-    
+
     // ------ set view ------
     canvas.translate(width/2, height/2, zoom); 
     canvas.rotateY(radians(average[1])+frameCount*.005); 
     canvas.rotateZ(radians(average[2])+frameCount*.002); 
-    
+
     // ------ draw image pensée ------
-    
+
     penseeA.fillColor = color(average[1]*255, average[1]*255, average[1]*255);
     penseeB.fillColor = color(100 + average[0]*100, 100 + average[0]*100, 0);
-    
+
     penseeA.draw(canvas);
     penseeB.draw(canvas);
     penseeC.draw(canvas);
-  
+
     canvas.popMatrix();
-    
+
     canvas.endDraw();
   }
 }
@@ -204,7 +209,7 @@ class Agent {
     ribbon = new Ribbon3d(p, ribbonAmount);//(int)random(2, 5));
 
     // precompute positions
-    for (int i=0;i<positionSteps;i++) {
+    for (int i=0; i<positionSteps; i++) {
       PVector thisP = new PVector(p.x, p.y, p.z);
       if (i>1) {
         thisP.x = positionsX[i-1];
@@ -221,8 +226,7 @@ class Agent {
         positionsX[i] = thisP.x;
         positionsY[i] = thisP.y;
         positionsZ[i] = thisP.z;
-      } 
-      else {
+      } else {
         positionsX[i] = p.x;
         positionsY[i] = p.y;
         positionsZ[i] = p.z;
@@ -235,7 +239,7 @@ class Agent {
 
     // set colors array
     colors = new color[getVertexCount()];
-    for (int i=0;i<getVertexCount();i++) {
+    for (int i=0; i<getVertexCount (); i++) {
       colors[i] = myColor;
     }
 
@@ -303,7 +307,7 @@ class Drole {
     this.id = id;
 
     oldPositions = new PVector[stepsAmount];
-    for (int i=0;i<stepsAmount;i++) {
+    for (int i=0; i<stepsAmount; i++) {
       oldPositions[i] = new PVector();
     }
   }
@@ -329,24 +333,24 @@ class Drole {
     oldPositions[0].z = xyzPos.z;
 
     // save old positions
-    for (int i=stepsAmount-1;i>0;i--) {
+    for (int i=stepsAmount-1; i>0; i--) {
       oldPositions[i].x = oldPositions[i-1].x;
       oldPositions[i].y = oldPositions[i-1].y;
       oldPositions[i].z = oldPositions[i-1].z;
     }
   }
-  
+
   void addPosition(float x, float y, float z) {
     xyzPos.x = x;
     xyzPos.y = y;
     xyzPos.z = z;
-    
+
     oldPositions[0].x = xyzPos.x;
     oldPositions[0].y = xyzPos.y;
     oldPositions[0].z = xyzPos.z;
 
     // save old positions
-    for (int i=stepsAmount-1;i>0;i--) {
+    for (int i=stepsAmount-1; i>0; i--) {
       oldPositions[i].x = oldPositions[i-1].x;
       oldPositions[i].y = oldPositions[i-1].y;
       oldPositions[i].z = oldPositions[i-1].z;
@@ -394,31 +398,31 @@ class Pensee {
     agents = new Agent[agentsCount];
 
     int i=0;
-    for (int x=0;x<content.width;x++) {
-      for (int y=0;y<content.height;y++) {
+    for (int x=0; x<content.width; x++) {
+      for (int y=0; y<content.height; y++) {
         agents[i++]=new Agent(new PVector(x-content.width/2, y-content.height/2, 0), content.get(x, y), positionSteps, noiseScale, noiseStrength);
         vertexCount += agents[i-1].getVertexCount();
       }
     }
-/*
+    /*
     // extract agents vertices
-    PVector[] vertices = new PVector[vertexCount];
-    int vertexIndex = 0;
-    for (Agent agent:agents) {
-      for (PVector p:agent.getVertices()) {
-        vertices[vertexIndex++] = new PVector(p.x, p.y, p.z);
-      }
-    }
-    */
-    
+     PVector[] vertices = new PVector[vertexCount];
+     int vertexIndex = 0;
+     for (Agent agent:agents) {
+     for (PVector p:agent.getVertices()) {
+     vertices[vertexIndex++] = new PVector(p.x, p.y, p.z);
+     }
+     }
+     */
+
     // create a model that uses quads
     /*
     imageQuadModel = new GLModel(parent, vertexCount*4, QUADS, GLModel.DYNAMIC);
-    imageQuadModel.initColors();
-    imageQuadModel.initNormals();
-    */
+     imageQuadModel.initColors();
+     imageQuadModel.initNormals();
+     */
     imageQuadModel = createShape();
-    
+
     // load shader
     // imageShader = new GLSLShader(parent, "imageVert.glsl", "imageFrag.glsl");
   }
@@ -430,26 +434,24 @@ class Pensee {
     }
     if (currPosition == 0) {
       // if (frameCount%200==0) {
-        animationDirection *= -1;
-        currPosition += animationDirection;
+      animationDirection *= -1;
+      currPosition += animationDirection;
       // }
-    }
-    else {
+    } else {
       currPosition += animationDirection;
     }
 
     // eased value out of currStep/positionSteps
     easedPosition = Cubic.easeInOut (currPosition, 0, positionSteps-1, positionSteps);
-    
   }
 
   void draw(PGraphics canvas) {//GLGraphics renderer) {
     // renderer.lights();
     // update glmodel
-    
+
     // extract agents vertices
 
-    //if(frameCount%100==0) {
+      //if(frameCount%100==0) {
     float[] floatQuadVertices = new float[vertexCount*16];
     float[] floatQuadNormals = new float[vertexCount*16];
     float[] floatQuadColors = new float[vertexCount*16];
@@ -460,127 +462,123 @@ class Pensee {
     int easedIndex = (int)easedPosition;
     float quadHeight = 5.0 + cos(frameCount*.01)*5;
     boolean isUpdate = false;
-    if(oldEasedIndex != easedIndex) isUpdate = true;
+    if (oldEasedIndex != easedIndex) isUpdate = true;
     oldEasedIndex = easedIndex;
-    
+
     imageQuadModel = createShape();
     imageQuadModel.setFill(fillColor);
     imageQuadModel.beginShape(QUADS);
     imageQuadModel.noStroke();
-    
+
     // for (Agent agent:agents) {
-    for(int i=0;i<agentsCount;i++) {
+    for (int i=0; i<agentsCount; i++) {
       Agent agent = agents[i];
       // set agents position
       // TODO: improve updating performance
-      if(isUpdate) agent.update(easedIndex);
-      
+      if (isUpdate) agent.update(easedIndex);
+
       boolean[] gaps = agent.getGaps();
       int gapIndex = 0;
-      
+
       // create quads from ribbons
       PVector[] agentsVertices = agent.getVertices();
       int agentVertexNum = agentsVertices.length;
-      
-      for(int j=0;j<agentVertexNum-1;j++) {
+
+      for (int j=0; j<agentVertexNum-1; j++) {
         PVector thisP = agentsVertices[j];
         PVector nextP = agentsVertices[j+1];
         PVector thirdP = agentsVertices[j+1];
         /*
         // TODO: create quad from above vertices and save in glmodel, then add colors
-        floatQuadVertices[quadVertexIndex++] = thisP.x;
-        floatQuadVertices[quadVertexIndex++] = thisP.y;
-        floatQuadVertices[quadVertexIndex++] = thisP.z;
-        floatQuadVertices[quadVertexIndex++] = 1.0;
-        
-        floatQuadVertices[quadVertexIndex++] = thisP.x;
-        floatQuadVertices[quadVertexIndex++] = thisP.y + quadHeight;
-        floatQuadVertices[quadVertexIndex++] = thisP.z;
-        floatQuadVertices[quadVertexIndex++] = 1.0;
-        
-        floatQuadVertices[quadVertexIndex++] = nextP.x;
-        floatQuadVertices[quadVertexIndex++] = nextP.y + quadHeight;
-        floatQuadVertices[quadVertexIndex++] = nextP.z;
-        floatQuadVertices[quadVertexIndex++] = 1.0;
-        
-        floatQuadVertices[quadVertexIndex++] = nextP.x;
-        floatQuadVertices[quadVertexIndex++] = nextP.y;
-        floatQuadVertices[quadVertexIndex++] = nextP.z;
-        floatQuadVertices[quadVertexIndex++] = 1.0;
-        */
+         floatQuadVertices[quadVertexIndex++] = thisP.x;
+         floatQuadVertices[quadVertexIndex++] = thisP.y;
+         floatQuadVertices[quadVertexIndex++] = thisP.z;
+         floatQuadVertices[quadVertexIndex++] = 1.0;
+         
+         floatQuadVertices[quadVertexIndex++] = thisP.x;
+         floatQuadVertices[quadVertexIndex++] = thisP.y + quadHeight;
+         floatQuadVertices[quadVertexIndex++] = thisP.z;
+         floatQuadVertices[quadVertexIndex++] = 1.0;
+         
+         floatQuadVertices[quadVertexIndex++] = nextP.x;
+         floatQuadVertices[quadVertexIndex++] = nextP.y + quadHeight;
+         floatQuadVertices[quadVertexIndex++] = nextP.z;
+         floatQuadVertices[quadVertexIndex++] = 1.0;
+         
+         floatQuadVertices[quadVertexIndex++] = nextP.x;
+         floatQuadVertices[quadVertexIndex++] = nextP.y;
+         floatQuadVertices[quadVertexIndex++] = nextP.z;
+         floatQuadVertices[quadVertexIndex++] = 1.0;
+         */
         imageQuadModel.vertex(thisP.x, thisP.y, thisP.z);
         imageQuadModel.vertex(thisP.x, thisP.y + quadHeight, thisP.z);
         imageQuadModel.vertex(nextP.x, nextP.y + quadHeight, nextP.z);
         imageQuadModel.vertex(nextP.x, nextP.y, nextP.z);
-        
+
         // compute face normal
         PVector v1 = new PVector(thisP.x - nextP.x, thisP.y - nextP.y, thisP.z - nextP.z);
         PVector v2 = new PVector(nextP.x - thisP.x, (nextP.y+quadHeight) - thisP.y, nextP.z - thisP.z);
         PVector v3 = v1.cross(v2);
         v3.normalize();
-        
+
         float nX = v3.x;
         float nY = v3.y;
         float nZ = v3.z;
         /*
         floatQuadNormals[quadNormalIndex++] = nX;
-        floatQuadNormals[quadNormalIndex++] = nY;
-        floatQuadNormals[quadNormalIndex++] = nZ;
-        floatQuadNormals[quadNormalIndex++] = 1.0;
-        
-        floatQuadNormals[quadNormalIndex++] = nX;
-        floatQuadNormals[quadNormalIndex++] = nY;
-        floatQuadNormals[quadNormalIndex++] = nZ;
-        floatQuadNormals[quadNormalIndex++] = 1.0;
-        
-        floatQuadNormals[quadNormalIndex++] = nX;
-        floatQuadNormals[quadNormalIndex++] = nY;
-        floatQuadNormals[quadNormalIndex++] = nZ;
-        floatQuadNormals[quadNormalIndex++] = 1.0;
-        
-        floatQuadNormals[quadNormalIndex++] = nX;
-        floatQuadNormals[quadNormalIndex++] = nY;
-        floatQuadNormals[quadNormalIndex++] = nZ;
-        floatQuadNormals[quadNormalIndex++] = 1.0;
-        */
+         floatQuadNormals[quadNormalIndex++] = nY;
+         floatQuadNormals[quadNormalIndex++] = nZ;
+         floatQuadNormals[quadNormalIndex++] = 1.0;
+         
+         floatQuadNormals[quadNormalIndex++] = nX;
+         floatQuadNormals[quadNormalIndex++] = nY;
+         floatQuadNormals[quadNormalIndex++] = nZ;
+         floatQuadNormals[quadNormalIndex++] = 1.0;
+         
+         floatQuadNormals[quadNormalIndex++] = nX;
+         floatQuadNormals[quadNormalIndex++] = nY;
+         floatQuadNormals[quadNormalIndex++] = nZ;
+         floatQuadNormals[quadNormalIndex++] = 1.0;
+         
+         floatQuadNormals[quadNormalIndex++] = nX;
+         floatQuadNormals[quadNormalIndex++] = nY;
+         floatQuadNormals[quadNormalIndex++] = nZ;
+         floatQuadNormals[quadNormalIndex++] = 1.0;
+         */
         imageQuadModel.normal(nX, nY, nZ);
         imageQuadModel.normal(nX, nY, nZ);
         imageQuadModel.normal(nX, nY, nZ);
         imageQuadModel.normal(nX, nY, nZ);
         /*
         // add colors
-        float theAlpha = agent.a * ((!gaps[gapIndex++]) ? 1.0 : 0.0);
-        
-        floatQuadColors[quadColorIndex++] = agent.r;
-        floatQuadColors[quadColorIndex++] = agent.g;
-        floatQuadColors[quadColorIndex++] = agent.b;
-        floatQuadColors[quadColorIndex++] = theAlpha;
-        
-        floatQuadColors[quadColorIndex++] = agent.r;
-        floatQuadColors[quadColorIndex++] = agent.g;
-        floatQuadColors[quadColorIndex++] = agent.b;
-        floatQuadColors[quadColorIndex++] = theAlpha;
-        
-        floatQuadColors[quadColorIndex++] = agent.r;
-        floatQuadColors[quadColorIndex++] = agent.g;
-        floatQuadColors[quadColorIndex++] = agent.b;
-        floatQuadColors[quadColorIndex++] = theAlpha;
-        
-        floatQuadColors[quadColorIndex++] = agent.r;
-        floatQuadColors[quadColorIndex++] = agent.g;
-        floatQuadColors[quadColorIndex++] = agent.b;
-        floatQuadColors[quadColorIndex++] = theAlpha;
-       */
+         float theAlpha = agent.a * ((!gaps[gapIndex++]) ? 1.0 : 0.0);
+         
+         floatQuadColors[quadColorIndex++] = agent.r;
+         floatQuadColors[quadColorIndex++] = agent.g;
+         floatQuadColors[quadColorIndex++] = agent.b;
+         floatQuadColors[quadColorIndex++] = theAlpha;
+         
+         floatQuadColors[quadColorIndex++] = agent.r;
+         floatQuadColors[quadColorIndex++] = agent.g;
+         floatQuadColors[quadColorIndex++] = agent.b;
+         floatQuadColors[quadColorIndex++] = theAlpha;
+         
+         floatQuadColors[quadColorIndex++] = agent.r;
+         floatQuadColors[quadColorIndex++] = agent.g;
+         floatQuadColors[quadColorIndex++] = agent.b;
+         floatQuadColors[quadColorIndex++] = theAlpha;
+         
+         floatQuadColors[quadColorIndex++] = agent.r;
+         floatQuadColors[quadColorIndex++] = agent.g;
+         floatQuadColors[quadColorIndex++] = agent.b;
+         floatQuadColors[quadColorIndex++] = theAlpha;
+         */
         // imageQuadModel.setFill(color(255, 255, 255));
- 
-              
       }
-      
     }
-    
+
     imageQuadModel.endShape();
     canvas.shape(imageQuadModel);
-    
   }
 }
 
@@ -614,86 +612,87 @@ class Ribbon3d {
     count = theCount; 
     p = new PVector[count];
     isGap = new boolean[count];
-    for(int i=0; i<count; i++) {
-      p[i] = new PVector(theP.x,theP.y,theP.z);
+    for (int i=0; i<count; i++) {
+      p[i] = new PVector(theP.x, theP.y, theP.z);
       isGap[i] = false;
     }
   }
 
-  void update(PVector theP, boolean theIsGap){
+  void update(PVector theP, boolean theIsGap) {
     // shift the values to the right side
     // simple queue
-    for(int i=count-1; i>0; i--) {
+    for (int i=count-1; i>0; i--) {
       p[i].set(p[i-1]);
       isGap[i] = isGap[i-1];
     }
     p[0].set(theP);
     isGap[0] = theIsGap;
   }
-/*
+  /*
   void drawMeshRibbon(color theMeshCol, float theWidth) {
-    // draw the ribbons with meshes
-    fill(theMeshCol);
-    noStroke();
-
-    beginShape(QUAD_STRIP);
-    for(int i=0; i<count-1; i++) {
-      // if the point was wraped -> finish the mesh an start a new one
-      if (isGap[i] == true) {
-        vertex(p[i].x, p[i].y, p[i].z);
-        vertex(p[i].x, p[i].y, p[i].z);
-        endShape();
-        beginShape(QUAD_STRIP);
-      } 
-      else {        
-        PVector v1 = PVector.sub(p[i],p[i+1]);
-        PVector v2 = PVector.add(p[i+1],p[i]);
-        PVector v3 = v1.cross(v2);      
-        v2 = v1.cross(v3);
-        //v1.normalize();
-        v2.normalize();
-        //v3.normalize();
-        //v1.mult(theWidth);
-        v2.mult(theWidth);
-        //v3.mult(theWidth);
-        vertex(p[i].x+v2.x,p[i].y+v2.y,p[i].z+v2.z);
-        vertex(p[i].x-v2.x,p[i].y-v2.y,p[i].z-v2.z);
-
-
-      }
-
-    }
-    endShape();
-  }
-
-
-  void drawLineRibbon(color theStrokeCol, float theWidth) {
-    // draw the ribbons with lines
-    noFill();
-    strokeWeight(theWidth);
-    stroke(theStrokeCol);
-    beginShape();
-    for(int i=0; i<count; i++) {
-      vertex(p[i].x, p[i].y, p[i].z);
-      // if the point was wraped -> finish the line an start a new one
-      if (isGap[i] == true) {
-        endShape();
-        beginShape();
-      } 
-    }
-    endShape();
-  }
-  */
+   // draw the ribbons with meshes
+   fill(theMeshCol);
+   noStroke();
+   
+   beginShape(QUAD_STRIP);
+   for(int i=0; i<count-1; i++) {
+   // if the point was wraped -> finish the mesh an start a new one
+   if (isGap[i] == true) {
+   vertex(p[i].x, p[i].y, p[i].z);
+   vertex(p[i].x, p[i].y, p[i].z);
+   endShape();
+   beginShape(QUAD_STRIP);
+   } 
+   else {        
+   PVector v1 = PVector.sub(p[i],p[i+1]);
+   PVector v2 = PVector.add(p[i+1],p[i]);
+   PVector v3 = v1.cross(v2);      
+   v2 = v1.cross(v3);
+   //v1.normalize();
+   v2.normalize();
+   //v3.normalize();
+   //v1.mult(theWidth);
+   v2.mult(theWidth);
+   //v3.mult(theWidth);
+   vertex(p[i].x+v2.x,p[i].y+v2.y,p[i].z+v2.z);
+   vertex(p[i].x-v2.x,p[i].y-v2.y,p[i].z-v2.z);
+   
+   
+   }
+   
+   }
+   endShape();
+   }
+   
+   
+   void drawLineRibbon(color theStrokeCol, float theWidth) {
+   // draw the ribbons with lines
+   noFill();
+   strokeWeight(theWidth);
+   stroke(theStrokeCol);
+   beginShape();
+   for(int i=0; i<count; i++) {
+   vertex(p[i].x, p[i].y, p[i].z);
+   // if the point was wraped -> finish the line an start a new one
+   if (isGap[i] == true) {
+   endShape();
+   beginShape();
+   } 
+   }
+   endShape();
+   }
+   */
   int getVertexCount() {
     return count;
   }
-  
+
   // TODO: incorporate gaps
   PVector[] getVertices() {
     return p;
   }
-  
+
   boolean[] getGaps() {
     return isGap;
   }
 }
+

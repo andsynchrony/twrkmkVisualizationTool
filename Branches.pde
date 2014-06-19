@@ -16,6 +16,11 @@ class Branches implements Visualization
     println("WARNING: set up with empty handler");
   }
 
+  void setup(PApplet parent)
+  {
+    println("WARNING: set up with empty handler");
+  }
+
   void setup(int num, float size_x, float size_y)
   {
     branches = new ArrayList();
