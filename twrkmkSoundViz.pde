@@ -22,11 +22,30 @@ int visualizationID = 0;
 SyphonServer server;
 AudioHandler audio;
 
+// add for beatDetection
+import controlP5.*;
+ControlP5 cp5;
+float alpha = 0.9;
+float threshold = 0.2f;
+
 
 void setup() { 
 
   size(1024, 768, P3D); 
 
+  // controls for BeatDetection
+  cp5 = new ControlP5(this);
+  cp5.addSlider("alpha")
+    .setPosition(50, 50)
+      .setSize(100, 20)
+        .setRange(0, 1)
+          ;
+  cp5.addSlider("threshold")
+    .setPosition(50, 100)
+      .setSize(100, 20)
+        .setRange(0, 1)
+          ;
+          
   audio = new AudioHandler(numChannels, true); // num channels, debug mode on or off
 
 
@@ -54,7 +73,7 @@ void setup() {
     new Polyscape(width, height),
     new Branches(numChannels, width, height), 
     new BeadWave(this), 
-    new CatRobotDance(this)
+   // new CatRobotDance(this)
     };
   }
 

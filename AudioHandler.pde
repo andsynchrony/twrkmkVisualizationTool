@@ -3,6 +3,10 @@ import beads.*;
 class AudioHandler
 {
   AudioContext ac;
+  
+  //Add BeatDetector
+  PeakDetector od;
+  boolean beat;
 
   boolean debug = false;
 
@@ -48,12 +52,41 @@ class AudioHandler
       try
       {
         ac = new AudioContext(AudioContext.defaultAudioFormat(portAudio)); 
+        //ac = new AudioContext();
         ac.out.setGain(100); 
         UGen inputs = ac.getAudioInput(new int[] {
           0, 1, 2, 3, 4, 5, 6, 7
         }
         ); 
         ac.out.addInput(inputs); 
+        
+        // Add BeatDetection for all inputs
+        ShortFrameSegmenter sfs = new ShortFrameSegmenter(ac);
+        sfs.setChunkSize(2048);
+        sfs.setHopSize(441);
+        sfs.addInput(ac.out);
+        FFT fft = new FFT();
+        PowerSpectrum ps = new PowerSpectrum();
+        sfs.addListener(fft);
+        fft.addListener(ps);
+        SpectralDifference sd = new SpectralDifference(ac.getSampleRate());
+        ps.addListener(sd);
+        od = new PeakDetector();
+        sd.addListener(od);
+
+        od.setThreshold(threshold);
+        od.setAlpha(alpha);
+
+        od.addMessageListener(
+        new Bead() {
+          protected void messageReceived(Bead b)
+          {
+            beat = true;
+          }
+        }
+        );
+        ac.out.addDependent(sfs);
+        
         ac.start();
         println(ac.getBufferSize());
         buffer = 6;
@@ -73,6 +106,10 @@ class AudioHandler
   {
     if (!debug)
     {
+      // Einstellungesslider werte für beatDetection
+      od.setThreshold(threshold);
+      od.setAlpha(alpha);
+      
       try
       {
         for (int p = 0; p < portAudio; p++)
@@ -97,6 +134,12 @@ class AudioHandler
       for (int p = 0; p < portAudio; p++)
       {
         volume[p] = noise(p, frameCount*0.02 * p) * 100;
+      }
+      // debug "noise" beat
+      if (millis() % 300 < 20) {
+        beat = true;
+      } else {
+        beat = false;
       }
     }
 
@@ -132,6 +175,13 @@ class AudioHandler
       fill(255);
       rect(30, 22 + i*35, 100 * n[i], 15);
     }
+    
+    // beat
+    fill(255);
+    if(beat == true){
+      rect(30, 350, 100, 15);
+    }
+    text("beat", 30, 340);
   }
   
   // volume values, as received by Beads library
@@ -156,6 +206,13 @@ class AudioHandler
   float[] getSmoothed()
   {
     return smoothed;
+  }
+  
+  boolean getBeat()
+  {
+    boolean _beat = beat;
+    beat = false;
+    return _beat;
   }
 }
 
