@@ -4,8 +4,8 @@ import de.looksgood.ani.*;
 
 class CatRobotDance implements Visualization {
 
-    Robot[] r = new Robot[6];
-    Cat[] c = new Cat[2];
+    Robot[] r = new Robot[12];
+    Cat[] c = new Cat[4];
 
     CatRobotDance(PApplet parent) {
         setup(parent);
@@ -21,24 +21,28 @@ class CatRobotDance implements Visualization {
 
     void setup(PApplet parent) {
         Ani.init(parent);
-        for(int i = 0; i < r.length / 2; i++)
-            r[i] = new Robot((width/5) * (i + 1), height/3);
-        for(int i = 0; i < r.length / 2; i++)
-            r[i + r.length / 2] = new Robot((width/5) + (width/5) * (i + 1), (height/3)*2);
 
-        c[0] = new Cat((width/5) * 4 + 20, height/3 + 25);
-        c[1] = new Cat((width/5) + 20, (height/3) * 2 + 25);
+        for(int i = 0; i < 4; i++) {
+            int temp = 0;
+            for(int k = 0; k < 3; k++) {
+                if(i == k)  temp = 192;
+                r[i * 3 + k] = new Robot(128 + 192/2 + 192 * k + temp, 96 + i * 192);
+            }
+            c[i] = new Cat(128 + 192/2 + 192 * i, 96 + i * 192);
+        }
     }
 
     void draw(PGraphics canvas, float[] av) {
-        
         canvas.beginDraw();
         canvas.background(0);
 
-        for(int i = 0; i < r.length; i++)
-            r[i].drawRobot(canvas, av[i]);
-        for(int i = 0; i < c.length; i++)
-            c[i].drawCat(canvas, av[i + r.length]);
+        for(int k = 0; k < 4; k++) {
+            for(int i = 0; i < 4; i++) {
+                int indx = ((k * 4) + i) > 7 ? ((k * 4) + i) - 8 : (k * 4) + i;
+                if(i > 0)   r[(k * 3) + i - 1].drawRobot(canvas, av[indx]);
+                else        c[k].drawCat(canvas, av[indx]);
+            }
+        }
 
         canvas.endDraw();
     }
@@ -91,6 +95,7 @@ class Robot {
 class Cat {
     PVector loc;
     PImage body, head, eye, tail;
+    int mod = 1;
 
     Cat(int x, int y) {
         loc = new PVector(x, y);
@@ -106,26 +111,25 @@ class Cat {
 
         pg.pushMatrix();
             pg.imageMode(CENTER);
-            pg.scale(0.7);
+            pg.translate(loc.x, loc.y);
+            pg.scale(0.7 * mod, 0.7);
 
-            float ctr = map(av, 0, 75, -3, 3);
-            pg.image(body, loc.x, loc.y - ctr);
+            pg.image(body, 0, 0);
 
             pg.pushMatrix();
-                pg.translate(loc.x + 20, loc.y - 67);
-                // pg.rotate(map(av, 0.0, 1.0, 0, HALF_PI));
+                pg.translate(20, -67);
                 pg.rotate(map(av, 0.0, 0.8, QUARTER_PI, -QUARTER_PI));
                 pg.image(head, 0, 0);
             pg.popMatrix();
 
             pg.pushMatrix();
-                pg.translate(loc.x - 44, loc.y + 41);
+                pg.translate(-44, 41);
                 pg.rotate(rota);
                 pg.image(tail, 0, 0);
             pg.popMatrix();
 
             pg.pushMatrix();
-                pg.translate(loc.x + 22, loc.y - 69);
+                pg.translate(22, -69);
                 pg.scale(map(av, 0.0, 1.0, 0.5, 1.5));
                 pg.rotate(map(millis() % 10000, 0, 10000, 0, TWO_PI));
                 pg.image(eye, 0, 0);
