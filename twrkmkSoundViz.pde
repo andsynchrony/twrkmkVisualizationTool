@@ -73,7 +73,7 @@ void setup() {
     new Polyscape(width, height),
     new Branches(numChannels, width, height), 
     new BeadWave(this), 
-   // new CatRobotDance(this)
+    //new CatRobotDance(this)
     };
   }
 

@@ -59,5 +59,9 @@ class CircleClass implements Visualization
     canvas.ellipse(width/8*7, height/3*2, 100 * average[7], 100 * average[7]);
     canvas.endDraw();
   }
+  
+  void draw(PGraphics canvas, float[] average, boolean beat) {
+    draw(canvas, average);
+  }
 }
 

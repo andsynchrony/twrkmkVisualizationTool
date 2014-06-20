@@ -51,8 +51,8 @@ class AudioHandler
       println("starting audio...");
       try
       {
-        ac = new AudioContext(AudioContext.defaultAudioFormat(portAudio)); 
-        //ac = new AudioContext();
+        //ac = new AudioContext(AudioContext.defaultAudioFormat(portAudio)); 
+        ac = new AudioContext();
         ac.out.setGain(100); 
         UGen inputs = ac.getAudioInput(new int[] {
           0, 1, 2, 3, 4, 5, 6, 7

@@ -102,6 +102,10 @@ class Polyscape implements Visualization
     canvas.endShape();
     canvas.endDraw();
   }
+  
+  void draw(PGraphics canvas, float[] average, boolean beat) {
+    draw(canvas, average);
+  }
 
   void updateScape()
   {

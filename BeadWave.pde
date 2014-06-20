@@ -64,6 +64,10 @@ class BeadWave implements Visualization
 
     canvas.endDraw();
   }
+  
+  void draw(PGraphics canvas, float[] average, boolean beat){
+    draw(canvas, average);
+  }
 } //
 
 class Wave {
