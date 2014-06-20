@@ -1,13 +1,24 @@
-// by Simon Schweissinger
-
+// by Simon Schweissinger (@thnklt)
 
 import de.looksgood.ani.*;
 
-class CatRobotDance {
+class CatRobotDance implements Visualization {
 
     Robot[] r = new Robot[8];
 
     CatRobotDance(PApplet parent) {
+        setup(parent);
+    }
+
+    void setup(int num, float size_x, float size_y) {
+        println("WARNING: set up with empty handler");
+    }
+
+    void setup() {
+        println("WARNING: set up with empty handler");
+    }
+
+    void setup(PApplet parent) {
         Ani.init(parent);
         for(int i = 0; i < r.length / 2; i++)
             r[i] = new Robot((width/(r.length + 1)) + i * (width/(r.length + 1)), 100);
@@ -40,7 +51,7 @@ class Robot {
 
     void drawRobot(PGraphics pg, float av) {
         pg.beginDraw();
-        float rota = map(av, 0, 75, -HALF_PI, HALF_PI);
+        float rota = map(av, 0.0, 1.0, -HALF_PI, HALF_PI);
 
         pg.pushMatrix();
             pg.imageMode(CENTER);
