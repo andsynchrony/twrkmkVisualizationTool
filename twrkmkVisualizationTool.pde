@@ -17,7 +17,7 @@ boolean setDrawDebug = true;
 
 
 Visualization[] visualization;
-int visualizationID = 0;
+int visualizationID = 6;
 
 SyphonServer server;
 AudioHandler audio;

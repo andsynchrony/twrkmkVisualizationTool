@@ -21,9 +21,9 @@ class CatRobotDance implements Visualization {
     void setup(PApplet parent) {
         Ani.init(parent);
         for(int i = 0; i < r.length / 2; i++)
-            r[i] = new Robot((width/(r.length + 1)) + i * (width/(r.length + 1)), 100);
+            r[i] = new Robot((width/((r.length/2) + 1)) + i * (width/((r.length/2) + 1)), height/3);
         for(int i = 0; i < r.length / 2; i++)
-            r[i + r.length / 2] = new Robot((width/(r.length + 1)) + i * (width/(r.length + 1)), 200);
+            r[i + r.length / 2] = new Robot((width/((r.length/2) + 1)) + i * (width/((r.length/2) + 1)), (height/3)*2);
     }
 
     void draw(PGraphics canvas, float[] av) {
@@ -55,7 +55,7 @@ class Robot {
 
         pg.pushMatrix();
             pg.imageMode(CENTER);
-            pg.translate(loc.x, loc.y);
+            // pg.translate(loc.x, loc.y);
 
             float ctr = map(av, 0, 75, -3, 3);
             pg.image(chest, loc.x, loc.y - ctr);
