@@ -4,6 +4,7 @@ import processing.event.*;
 import processing.opengl.*; 
 
 import codeanticode.syphon.*; 
+import controlP5.*; 
 import beads.*; 
 import de.looksgood.ani.*; 
 import de.looksgood.ani.*; 
@@ -51,16 +52,35 @@ boolean setDrawDebug = true;
 
 
 Visualization[] visualization;
-int visualizationID = 0;
+int visualizationID = 6;
 
 SyphonServer server;
 AudioHandler audio;
+
+// add for beatDetection
+
+ControlP5 cp5;
+float alpha = 0.9f;
+float threshold = 0.2f;
 
 
 public void setup() { 
 
   size(1024, 768, P3D); 
 
+  // controls for BeatDetection
+  cp5 = new ControlP5(this);
+  cp5.addSlider("alpha")
+    .setPosition(50, 50)
+      .setSize(100, 20)
+        .setRange(0, 1)
+          ;
+  cp5.addSlider("threshold")
+    .setPosition(50, 100)
+      .setSize(100, 20)
+        .setRange(0, 1)
+          ;
+          
   audio = new AudioHandler(numChannels, true); // num channels, debug mode on or off
 
 
@@ -133,6 +153,10 @@ public void keyPressed()
 class AudioHandler
 {
   AudioContext ac;
+  
+  //Add BeatDetector
+  PeakDetector od;
+  boolean beat;
 
   boolean debug = false;
 
@@ -185,6 +209,34 @@ class AudioHandler
         }
         ); 
         ac.out.addInput(inputs); 
+        
+        // Add BeatDetection for all inputs
+        ShortFrameSegmenter sfs = new ShortFrameSegmenter(ac);
+        sfs.setChunkSize(2048);
+        sfs.setHopSize(441);
+        sfs.addInput(ac.out);
+        FFT fft = new FFT();
+        PowerSpectrum ps = new PowerSpectrum();
+        sfs.addListener(fft);
+        fft.addListener(ps);
+        SpectralDifference sd = new SpectralDifference(ac.getSampleRate());
+        ps.addListener(sd);
+        od = new PeakDetector();
+        sd.addListener(od);
+
+        od.setThreshold(threshold);
+        od.setAlpha(alpha);
+
+        od.addMessageListener(
+        new Bead() {
+          protected void messageReceived(Bead b)
+          {
+            beat = true;
+          }
+        }
+        );
+        ac.out.addDependent(sfs);
+        
         ac.start();
         println(ac.getBufferSize());
         buffer = 6;
@@ -204,6 +256,10 @@ class AudioHandler
   {
     if (!debug)
     {
+      // Einstellungesslider werte f\u00fcr beatDetection
+      od.setThreshold(threshold);
+      od.setAlpha(alpha);
+      
       try
       {
         for (int p = 0; p < portAudio; p++)
@@ -228,6 +284,12 @@ class AudioHandler
       for (int p = 0; p < portAudio; p++)
       {
         volume[p] = noise(p, frameCount*0.02f * p) * 100;
+      }
+      // debug "noise" beat
+      if (millis() % 300 < 20) {
+        beat = true;
+      } else {
+        beat = false;
       }
     }
 
@@ -263,6 +325,13 @@ class AudioHandler
       fill(255);
       rect(30, 22 + i*35, 100 * n[i], 15);
     }
+    
+    // beat
+    fill(255);
+    if(beat == true){
+      rect(30, 350, 100, 15);
+    }
+    text("beat", 30, 340);
   }
   
   // volume values, as received by Beads library
@@ -287,6 +356,13 @@ class AudioHandler
   public float[] getSmoothed()
   {
     return smoothed;
+  }
+  
+  public boolean getBeat()
+  {
+    boolean _beat = beat;
+    beat = false;
+    return _beat;
   }
 }
 
@@ -355,6 +431,10 @@ class BeadWave implements Visualization
     }
 
     canvas.endDraw();
+  }
+  
+  public void draw(PGraphics canvas, float[] average, boolean beat){
+    draw(canvas, average);
   }
 } //
 
@@ -492,6 +572,10 @@ class Branches implements Visualization
     }
     canvas.endDraw();
   }
+  
+  public void draw(PGraphics canvas, float[] average, boolean beat){
+    draw(canvas, average);
+  }
 }
 
 
@@ -609,7 +693,8 @@ class Spring2D {
 
 class CatRobotDance implements Visualization {
 
-    Robot[] r = new Robot[8];
+    Robot[] r = new Robot[12];
+    Cat[] c = new Cat[4];
 
     CatRobotDance(PApplet parent) {
         setup(parent);
@@ -625,18 +710,30 @@ class CatRobotDance implements Visualization {
 
     public void setup(PApplet parent) {
         Ani.init(parent);
-        for(int i = 0; i < r.length / 2; i++)
-            r[i] = new Robot((width/(r.length + 1)) + i * (width/(r.length + 1)), 100);
-        for(int i = 0; i < r.length / 2; i++)
-            r[i + r.length / 2] = new Robot((width/(r.length + 1)) + i * (width/(r.length + 1)), 200);
+
+        for(int i = 0; i < 4; i++) {
+            int temp = 0;
+            for(int k = 0; k < 3; k++) {
+                if(i == k)  temp = 192;
+                r[i * 3 + k] = new Robot(128 + 192/2 + 192 * k + temp, 96 + i * 192);
+            }
+            c[i] = new Cat(128 + 192/2 + 192 * i, 96 + i * 192);
+        }
     }
+
+    public void draw(PGraphics canvas, float[] av, boolean b) {}
 
     public void draw(PGraphics canvas, float[] av) {
         canvas.beginDraw();
         canvas.background(0);
 
-        for(int i = 0; i < r.length; i++)
-            r[i].drawRobot(canvas, av[i]);
+        for(int k = 0; k < 4; k++) {
+            for(int i = 0; i < 4; i++) {
+                int indx = ((k * 4) + i) > 7 ? ((k * 4) + i) - 8 : (k * 4) + i;
+                if(i > 0)   r[(k * 3) + i - 1].drawRobot(canvas, av[indx]);
+                else        c[k].drawCat(canvas, av[indx]);
+            }
+        }
 
         canvas.endDraw();
     }
@@ -660,15 +757,14 @@ class Robot {
 
         pg.pushMatrix();
             pg.imageMode(CENTER);
-            pg.translate(loc.x, loc.y);
 
-            float ctr = map(av, 0, 75, -3, 3);
+            float ctr = map(av, 0.0f, 1.0f, -3, 3);
             pg.image(chest, loc.x, loc.y - ctr);
 
-            pg.image(head, loc.x, loc.y - 40 - map(av, 0, 75, -5, 5));
+            pg.image(head, loc.x, loc.y - 40 - map(av, 0, 1.0f, -5, 5));
 
             pg.image(leg, loc.x - 15, loc.y + 55);
-            pg.image(leg, loc.x + 15, loc.y + 55 + map(av, 0, 75, -5, 5));
+            pg.image(leg, loc.x + 15, loc.y + 55 + map(av, 0, 1.0f, -5, 5));
 
             pg.pushMatrix();
                 pg.translate(loc.x - 37, loc.y - 20 - ctr);
@@ -685,7 +781,55 @@ class Robot {
 
         pg.endDraw();
     }
-}
+} // eoc
+
+class Cat {
+    PVector loc;
+    PImage body, head, eye, tail;
+    int mod = 1;
+
+    Cat(int x, int y) {
+        loc = new PVector(x, y);
+        eye = loadImage("cat-eye.png");
+        body = loadImage("cat-body.png");
+        tail = loadImage("cat-tail.png");
+        head = loadImage("cat-head.png");
+    }
+
+    public void drawCat(PGraphics pg, float av) {
+        pg.beginDraw();
+        float rota = map(av, 0.0f, 0.8f, -QUARTER_PI, QUARTER_PI);
+
+        pg.pushMatrix();
+            pg.imageMode(CENTER);
+            pg.translate(loc.x, loc.y);
+            pg.scale(0.7f * mod, 0.7f);
+
+            pg.image(body, 0, 0);
+
+            pg.pushMatrix();
+                pg.translate(20, -67);
+                pg.rotate(map(av, 0.0f, 0.8f, QUARTER_PI, -QUARTER_PI));
+                pg.image(head, 0, 0);
+            pg.popMatrix();
+
+            pg.pushMatrix();
+                pg.translate(-44, 41);
+                pg.rotate(rota);
+                pg.image(tail, 0, 0);
+            pg.popMatrix();
+
+            pg.pushMatrix();
+                pg.translate(22, -69);
+                pg.scale(map(av, 0.0f, 1.0f, 0.5f, 1.5f));
+                pg.rotate(map(millis() % 10000, 0, 10000, 0, TWO_PI));
+                pg.image(eye, 0, 0);
+            pg.popMatrix();
+        pg.popMatrix();
+
+        pg.endDraw();
+    }
+} // eoc
 // by Christopher Warnow
 
 
@@ -831,6 +975,10 @@ class ChrisClass implements Visualization
     canvas.popMatrix();
 
     canvas.endDraw();
+  }
+  
+  public void draw(PGraphics canvas, float[] average, boolean beat) {
+    draw(canvas, average);
   }
 }
 
@@ -1447,6 +1595,10 @@ class CircleClass implements Visualization
     canvas.ellipse(width/8*7, height/3*2, 100 * average[7], 100 * average[7]);
     canvas.endDraw();
   }
+  
+  public void draw(PGraphics canvas, float[] average, boolean beat) {
+    draw(canvas, average);
+  }
 }
 
 // polyscape visualization by stefan wagner (andsynchrony)
@@ -1552,6 +1704,10 @@ class Polyscape implements Visualization
 
     canvas.endShape();
     canvas.endDraw();
+  }
+  
+  public void draw(PGraphics canvas, float[] average, boolean beat) {
+    draw(canvas, average);
   }
 
   public void updateScape()
@@ -1682,6 +1838,10 @@ class ThomasClass implements Visualization
 
     canvas.endDraw();
   }
+  
+  public void draw(PGraphics canvas, float[] average, boolean beat) {
+    draw(canvas, average);
+  }
 }
 
 public interface Visualization
@@ -1690,6 +1850,7 @@ public interface Visualization
   public void setup(int num, float size_x, float size_y);
   public void setup(PApplet parent);
   public void draw(PGraphics canvas, float[] average);
+  public void draw(PGraphics canvas, float[] average, boolean beat);
 }
 
 public void switchVisualization(int id)

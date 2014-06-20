@@ -32,6 +32,8 @@ class CatRobotDance implements Visualization {
         }
     }
 
+    void draw(PGraphics canvas, float[] av, boolean b) {}
+
     void draw(PGraphics canvas, float[] av) {
         canvas.beginDraw();
         canvas.background(0);
