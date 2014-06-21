@@ -7,7 +7,7 @@ class Branches implements Visualization
 
   ArrayList branches;
   float velX, velY;
-
+  PImage gradient;
 
   Branches(int num, float size_x, float size_y)
   {
@@ -28,28 +28,32 @@ class Branches implements Visualization
   {
     branches = new ArrayList();
     for (int i = 0; i < num; i ++) {
-      branches.add(new Branch2D(random(size_x/8), random(size_y/10), 0, 0));
+      branches.add(new Branch2D(random(size_x), random(size_y), 0, 0));
     }
+    gradient = loadImage("gradient.png");
   }
 
   void draw(PGraphics canvas, float[] average)
   {
     canvas.beginDraw();
     canvas.colorMode(HSB);
-    canvas.background(0);
+    canvas.imageMode(CENTER);
+    canvas.background(100);
+    //canvas.blendMode(ADD);
     for (int i = 0; i < branches.size (); i ++)
     {
-      velX = abs(sin(radians(average[i])*200));
-      velY = abs(cos(radians(average[i])/120));
+      velX = abs((noise(average[i], 464)-0.5)*20);
+      velY = abs((noise(average[i], 234)-0.5)*10);
       //velX = average[i]*0.12;
       //velY = average[i]/0.12;
       Branch2D branch = (Branch2D) branches.get(i);
-      branch.generate(canvas, velX, velY);
+      branch.generate(canvas, velX, velY, gradient);
     }
+    canvas.blendMode(NORMAL);
     canvas.endDraw();
   }
-  
-  void draw(PGraphics canvas, float[] average, boolean beat){
+
+  void draw(PGraphics canvas, float[] average, boolean beat) {
     draw(canvas, average);
   }
 }
@@ -72,19 +76,19 @@ class Branch2D {
     for (int i = 0; i < numsprings; i += 5) {
       // randomSeed(i);
       if (i==0) {
-        springs.add(new Spring2D(posX, posY, mass, gravity));
+        springs.add(new Spring2D(posX, posY, mass, gravity, true));
       } else {
-        springs.add(new Spring2D(dirX-random(0, abs(dirX)), dirY-random(0, abs(dirY)), mass, gravity));
+        springs.add(new Spring2D(dirX-random(0, dirX), dirY-random(0, dirY), mass, gravity, false));
       }
       for (int j=1; j<4; j++) {
-        springs.add(new Spring2D(random(-5, 5), random(-5, 5), mass, gravity));
+        springs.add(new Spring2D(random(-5, 5), random(-4, 6), mass, gravity, false));
       }
     }
   }
-  void generate(PGraphics canvas, float velX, float velY) {
+  void generate(PGraphics canvas, float velX, float velY, PImage img) {
     Spring2D firstspring = (Spring2D) springs.get(0);
     firstspring.update(posX, posY, velX, velY);
-    firstspring.display(canvas, mouseX, mouseY);
+    firstspring.display(canvas, mouseX, mouseY, img);
     for (int i = 0; i < springs.size (); i += 5) {
       randomSeed(i);
       if (i == 0) {
@@ -97,7 +101,7 @@ class Branch2D {
           backspring = (Spring2D) springs.get(i-round(random(1, 5)));
         }
         spring.update(backspring.x, backspring.y, velX, velY);
-        spring.display(canvas, backspring.x, backspring.y);
+        spring.display(canvas, backspring.x, backspring.y, img);
         canvas.stroke(0);
         canvas.strokeWeight(50/i);
         canvas.strokeCap(ROUND);
@@ -107,7 +111,7 @@ class Branch2D {
           spring2.update(backspring.x, backspring.y, velX, velY);  
           canvas.stroke(0);
           canvas.line(spring2.x, spring2.y, backspring.x, backspring.y);
-          spring2.display(canvas, backspring.x, backspring.y);
+          spring2.display(canvas, backspring.x, backspring.y, img);
         }
       }
     }
@@ -121,11 +125,13 @@ class Spring2D {
   float gravity;
   float mass;
   float radius = 5;
-  float stiffness = 0.4;
-  float damping = 0.7;
+  float stiffness = 0.5;
+  float damping = 0.9;
   float velX;
   float velY;
-  Spring2D(float xpos, float ypos, float m, float g) {
+  boolean isFixed = false;
+  Spring2D(float xpos, float ypos, float m, float g, boolean f) {
+    isFixed = f;
     x = xpos;
     y = ypos;
     _x = xpos;
@@ -134,31 +140,41 @@ class Spring2D {
     gravity = g;
   }
   void update(float targetX, float targetY, float velX, float velY) {
-    float forceX = (targetX - x) * stiffness;
-    float ax = forceX / mass;
-    vx = damping * (vx + ax);
-    vx += velX;
-    x += vx;
-    x += _x;
-    float forceY = (targetY - y) * stiffness;
-    forceY += gravity;
-    float ay = forceY / mass;
-    vy = damping * (vy + ay);
-    vy += velY;
-    y += vy;
-    y += _y;
+    if (!isFixed)
+    {
+      float forceX = (targetX - x) * stiffness;
+      float ax = forceX / mass;
+      vx = damping * (vx + ax);
+      vx += velX;
+      x += vx;
+      x += _x;
+      float forceY = (targetY - y) * stiffness;
+      forceY += gravity;
+      float ay = forceY / mass;
+      vy = damping * (vy + ay);
+      vy += velY;
+      y += vy;
+      y += _y;
+    }
   }
-  void display(PGraphics canvas, float nx, float ny) {
-    canvas.noStroke();
+  void display(PGraphics canvas, float nx, float ny, PImage img) {
+    //canvas.noStroke();
+    canvas.stroke(0,40);
+    canvas.strokeWeight(1);
 
-    for (int i = 0; i < 50; i++) {
-      canvas.fill(95, random(300, 360), random(100, 360));
-      canvas.rect(x+random(-20, 20), y+random(-20, 20), radius, radius);
+    for (int i = 0; i < 1; i++) {
+      canvas.tint(95, random(300, 360), random(100, 360), vx * 100);
+      //canvas.rect(x+random(-20, 20), y+random(-20, 20), radius, radius);
+      //canvas.image(img, x+random(-20, 20), y+random(-20, 20), radius, radius);
+      canvas.line(x,y,x+vx,x+vy);
     }
     randomSeed(round(x*2/3));
     for (int i = 0; i < 10; i++) {
-      canvas.fill(0, 0, 360);
-      canvas.rect(x+random(-10, 10), y+random(-10, 10), radius*2, radius*2);
+      canvas.tint(0, 0, 360, vx * 100);
+      //canvas.rect(x+random(-10, 10), y+random(-10, 10), radius*2, radius*2);
+       canvas.line(x+random(-10, 10), y+random(-10, 10),x+vx,x+vy);
+
+      //canvas.image(img, x+random(-10, 10), y+random(-10, 10), radius*2, radius*2);
     }
   }
 }

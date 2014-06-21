@@ -9,7 +9,7 @@ public interface Visualization
 
 void switchVisualization(int id)
 {
-  visualizationID = constrain(id, 0, visualization.length-1);
+  visualizationID = constrain(id%visualization.length, 0, visualization.length-1);
   println("Switched to visualization # " + visualizationID);
 }
 
