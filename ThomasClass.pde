@@ -34,6 +34,7 @@ class ThomasClass implements Visualization
       canvas.background(255, 2);
     else
       canvas.background(0);
+    canvas.pushMatrix();
     canvas.noFill();
     canvas.stroke(255);
     canvas.strokeWeight(1);
@@ -123,6 +124,8 @@ class ThomasClass implements Visualization
         }
       }
     }
+    canvas.popMatrix();
+    canvas.rectMode(CORNER);
     canvas.endDraw();
   }
 }

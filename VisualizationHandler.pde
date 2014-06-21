@@ -11,5 +11,10 @@ void switchVisualization(int id)
 {
   visualizationID = constrain(id%visualization.length, 0, visualization.length-1);
   println("Switched to visualization # " + visualizationID);
+  
+  canvas.beginDraw();
+  canvas.background(200);
+  canvas.endDraw();
+  
 }
 

@@ -14,7 +14,7 @@ PGraphics canvas;
 int numChannels = 8;
 
 Visualization[] visualization;
-int visualizationID = 4;
+int visualizationID = 0;
 
 SyphonServer server;
 AudioHandler audio;

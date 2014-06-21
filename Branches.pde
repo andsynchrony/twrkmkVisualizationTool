@@ -39,10 +39,10 @@ class Branches implements Visualization
     canvas.beginDraw();
     canvas.colorMode(HSB);
     canvas.imageMode(CENTER);
-    canvas.fill((frameCount*8)%360, 360, 200, 6);
+    canvas.fill((frameCount*8)%360, 360, 360, 3);
     canvas.rect(0,0,width,height);
     canvas.strokeCap(ROUND);
-    canvas.blendMode(ADD);
+    //canvas.blendMode(ADD);
     for (int i = 0; i < branches.size (); i ++)
     {
       velX = (noise(8768, average[i%average.length])-0.5)*10;

@@ -37,7 +37,7 @@ class CatRobotDance implements Visualization {
     void draw(PGraphics canvas, float[] av) {
         canvas.beginDraw();
         canvas.background(0);
-
+        canvas.tint(255);
         for(int k = 0; k < 4; k++) {
             for(int i = 0; i < 4; i++) {
                 int indx = ((k * 4) + i) > 7 ? ((k * 4) + i) - 8 : (k * 4) + i;
@@ -45,7 +45,6 @@ class CatRobotDance implements Visualization {
                 else        c[k].drawCat(canvas, av[indx]);
             }
         }
-
         canvas.endDraw();
     }
 };
