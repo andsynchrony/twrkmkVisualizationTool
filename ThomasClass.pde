@@ -16,9 +16,7 @@ class ThomasClass implements Visualization
 
   void setup()
   {
-
-    img = loadImage("2.png");
-    // setup stuff comes here (image loading etc)
+    println("WARNING: set up with empty handler");
   }
 
   void setup(PApplet parent)
@@ -26,79 +24,106 @@ class ThomasClass implements Visualization
     println("WARNING: set up with empty handler");
   }
 
+  void draw(PGraphics canvas, float[] average, boolean b) {
+  }
+
   void draw(PGraphics canvas, float[] average)
   {
-    // drawing stuff comes here (image loading etc)
-
-    int faktor = 1; 
-
     canvas.beginDraw();
-    canvas.background(255);
-
-    //canvas.smooth();
-
-    // cat
-    canvas.tint(255, 255-average[1]*3*faktor);
-    canvas.imageMode(CENTER);
-    canvas.image(img, width/2, height/2);
-
-    // bass oder schlagzeug
-    canvas.strokeWeight(0);
+    if (random(0, 1) > 0.95)
+      canvas.background(255, 2);
+    else
+      canvas.background(0);
+    canvas.noFill();
+    canvas.stroke(255);
+    canvas.strokeWeight(1);
     canvas.rectMode(CENTER);
-    canvas.fill(0, 200-average[3]*3*faktor);
-    canvas.rect(width/2, height/2, width, height);
 
-    // grid ellipsen
-    canvas.tint(255);
-    for (int i = 0; i < width+20; i+=width/50)
+    float triggerwert = 0.75;
+    int h = height/4;
+    int luecken = 25;    // ab 30 > linien verschwinden
+    //float rota = radians((values[0]-0.5)*20);    // rotation nur von einem kanal abhängig > dann unten auskomm.
+    int valtemp;
+
+
+    // werte zwischen 0 und 1 zwingen
+    float[] values = new float[8];
+    for (int i = 0; i < 8; i++)
     {
-      for (int j = 0; j < height+20; j+=width/50)
+      if (average[i] > 0 && average[i] < 1)
+        values[i] = average[i];
+      else
+        values[i] = 0;
+    }
+
+
+    // anordnung position (kasten links oben)
+    canvas.translate(width/2-(1.5*h), h/2);
+
+    /*
+    // fill über triggerwert
+     if(values[0] > triggerwert)
+     {
+     canvas.fill(255, values[0]*30);
+     }
+     */
+
+    // array
+    for (int i=0; i < 4; i++)
+    {
+      for (int j=0; j < 4; j++)
       {
-        canvas.fill(23, 167, 118, 30);
-        canvas.noFill();
-        canvas.strokeWeight(1);
-        canvas.stroke(23, 167, 118, 200);
-        // position und größe
-        canvas.ellipse(i+random(average[0]/20*faktor), j+random(average[0]/20*faktor), average[2]/2*faktor, average[2]/2*faktor);
+        // 8 channels in grid anordnen
+        if (j == 0 || j == 2)
+          valtemp = i;
+        else
+          valtemp = i+4;
+
+        // innerhalb (an richtiger position)
+        canvas.pushMatrix();  
+
+        canvas.translate(i*h, j*h);
+        //canvas.scale(1.9);
+        //for(int r= h-luecken; r > (1-values[valtemp])*200; r-= 5)
+        for (int r= h-luecken; r > (1.3-values[valtemp])*200; r-= 5)    // dichte der kaesten ineinander || evtl. problemstelle??? > constrain > vorher berechnen (variable?)
+        {
+          float rota = radians((values[valtemp])*5);      // rotation / tiefe abahaengig
+          //float rota = radians((values[7-valtemp]-0.5)*20);    // rotation / tiefe unabahaengig
+          //if(j == 2 || j == 3)
+          if (keyPressed == true && keyCode == DOWN)
+            ;
+          else
+            canvas.rotate(rota);
+          canvas.stroke(map(r, h-luecken, 0, 255, -100));
+          canvas.rect(0, 0, r, r);
+        }
+
+        canvas.popMatrix();  
+        // innerhalb ende
+
+
+        // grün bei wenig signal
+        if (values[valtemp] < 0.25)
+        {
+          canvas.noStroke();
+          canvas.fill(23, 167, 118, 200);
+          canvas.rect(i*h, j*h, h-(luecken/2), h-(luecken/2));
+          canvas.noFill();
+        }
+
+
+        // gewitter
+        if (values[0]+values[1]+values[2]+values[3]+values[4]+values[5]+values[6]+values[7] > 7.7) // 0 bis 8
+        {
+          canvas.noStroke();
+          if (random(0, 1) > 0.5)
+            canvas.fill(255);
+          canvas.rect(i*h, j*h, h-(luecken/2), h-(luecken/2));
+          canvas.noFill();
+        }
       }
     }
-
-
-    // auge
-    //canvas.strokeWeight(2);
-    canvas.stroke(0, 40);
-
-    canvas.fill(0, 0);
-    canvas.rectMode(CENTER);
-/*
-    for (int k = 0; k < average[1]*faktor; k+=1)
-    {
-      canvas.ellipse(572, 294, average[4]*k*faktor, average[4]*k*faktor);
-    }    
-*/
-
-    // rotating bars
-    canvas.pushMatrix();
-
-    canvas.translate(width/2, height/2);
-    canvas.rotate(radians(average[5]*faktor));
-/*
-    for (int l = -height/2; l < height/2; l+=average[6]/5*faktor)
-    {
-
-      canvas.stroke(0, 100);
-      canvas.strokeWeight(average[7]/30*faktor);
-      canvas.line(l, -height/2, l, height/2);
-    }
-*/
-    canvas.popMatrix();
-
-
     canvas.endDraw();
-  }
-  
-  void draw(PGraphics canvas, float[] average, boolean beat) {
-    draw(canvas, average);
   }
 }
 
