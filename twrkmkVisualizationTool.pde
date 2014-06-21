@@ -1,11 +1,11 @@
 /*======================================
-   __                __                 
-  / /__      _______/ /______ ___  _____
+ __                __                 
+ / /__      _______/ /______ ___  _____
  / __/ | /| / / ___/ //_/ __ `__ \/ ___/
-/ /_ | |/ |/ / /  / ,< / / / / / / /__  
-\__/ |__/|__/_/  /_/|_/_/ /_/ /_/\___/  
-
-====== Sound Visualization Tool ======*/
+ / /_ | |/ |/ / /  / ,< / / / / / / /__  
+ \__/ |__/|__/_/  /_/|_/_/ /_/ /_/\___/  
+ 
+ ====== Sound Visualization Tool ======*/
 
 import codeanticode.syphon.*;
 
@@ -13,11 +13,8 @@ PGraphics canvas;
 
 int numChannels = 8;
 
-boolean setDrawDebug = true;
-
-
 Visualization[] visualization;
-int visualizationID = 6;
+int visualizationID = 0;
 
 SyphonServer server;
 AudioHandler audio;
@@ -28,31 +25,28 @@ ControlP5 cp5;
 float alpha = 0.9;
 float threshold = 0.2f;
 
+boolean setDrawDebug;
 
-void setup() { 
 
+void setup()
+{ 
   size(1024, 768, P3D); 
-
   // controls for BeatDetection
   cp5 = new ControlP5(this);
   cp5.addSlider("alpha")
-    .setPosition(50, 50)
+    .setPosition(30, height-100)
       .setSize(100, 20)
         .setRange(0, 1)
           ;
   cp5.addSlider("threshold")
-    .setPosition(50, 100)
+    .setPosition(30, height-50)
       .setSize(100, 20)
         .setRange(0, 1)
           ;
-          
+
   audio = new AudioHandler(numChannels, true); // num channels, debug mode on or off
 
-
   canvas = createGraphics(width, height, P3D);
-  canvas.beginDraw();
-  canvas.background(0, 0, 0);
-  canvas.endDraw();
 
   println("starting syphon...");
   try
@@ -70,25 +64,23 @@ void setup() {
     new CircleClass(), 
     new ThomasClass(), 
     new ChrisClass(), 
-    new Polyscape(width, height),
+    new Polyscape(width, height), 
     new Branches(numChannels, width, height), 
     new BeadWave(this), 
     new CatRobotDance(this)
     };
+
+    setDebug(true);
   }
 
-  void draw() { 
+  void draw()
+  { 
     background(0);
-
     audio.update();
-
     visualization[visualizationID].draw(canvas, audio.getSmoothed());
-    
     image(canvas, 0, 0);
-
     if (setDrawDebug)
       audio.drawInput();
-
     server.sendImage(canvas);
   }
 
@@ -103,13 +95,22 @@ void keyPressed()
       switchVisualization(id);
     }
   } 
-  catch(Exception e){}
+  catch(Exception e) {
+  }
   if (key == ' ')
   {
     switchVisualization(visualizationID+1);
   } else if (key == 'd')
   {
-    setDrawDebug = !setDrawDebug;
+    setDebug(!setDrawDebug);
   }
 }
 
+void setDebug(boolean b)
+{
+  setDrawDebug = b;
+  if (!setDrawDebug)
+    cp5.hide();
+  else
+    cp5.show();
+}
