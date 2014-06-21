@@ -29,7 +29,7 @@ class Branches implements Visualization
     branches = new ArrayList();
     for (int i = 0; i < num*2; i ++) {
       randomSeed(i);
-      branches.add(new Branch2D(190+(i%4)*200, 80+(i/4)*200, 0, 0, i));
+      branches.add(new Branch2D(190+(i%4)*200, 80+(i/4)*200, random(0,360), random(0,180), i*10));
     }
     gradient = loadImage("gradient.png");
   }
@@ -39,8 +39,10 @@ class Branches implements Visualization
     canvas.beginDraw();
     canvas.colorMode(HSB);
     canvas.imageMode(CENTER);
-    canvas.background(100);
-    //canvas.blendMode(ADD);
+    canvas.fill((frameCount*8)%360, 360, 200, 6);
+    canvas.rect(0,0,width,height);
+    canvas.strokeCap(ROUND);
+    canvas.blendMode(ADD);
     for (int i = 0; i < branches.size (); i ++)
     {
       velX = (noise(8768, average[i%average.length])-0.5)*10;
@@ -69,18 +71,18 @@ class Branch2D {
   float velX, velY;
   float posX, posY;
   float dirX, dirY;
-  Branch2D(float posX, float posY, float dirX, float dirY, float randomVal) {
+  Branch2D(float posX, float posY, float dirX, float dirY, int randomVal) {
     this.posX = posX;
     this.posY = posY;
     this.dirX = dirX;
     this.dirY = dirY;
     springs = new ArrayList();
     for (int i = 0; i < numsprings; i += 5) {
-      randomSeed(int(randomVal+i*posX*posY*dirX*dirY));
+      randomSeed(randomVal+i);
       if (i==0) {
         springs.add(new Spring2D(posX, posY, mass, gravity, true));
       } else {
-        springs.add(new Spring2D(dirX-random(0, dirX), dirY-random(0, dirY), mass, gravity, false));
+        springs.add(new Spring2D(random(-dirX, dirX), random(-dirY, dirY), mass, gravity, false));
       }
       for (int j=1; j<4; j++) {
         springs.add(new Spring2D(random(-5, 5), random(-4, 6), mass, gravity, false));
@@ -91,6 +93,7 @@ class Branch2D {
     Spring2D firstspring = (Spring2D) springs.get(0);
     firstspring.update(posX, posY, velX, velY);
     firstspring.display(canvas, mouseX, mouseY, velX, velY, img);
+    
     for (int i = 0; i < springs.size (); i += 5) {
       randomSeed(i);
       if (i == 0) {
@@ -106,7 +109,6 @@ class Branch2D {
         spring.display(canvas, backspring.x, backspring.y, velX, velY, img);
         canvas.stroke(0);
         canvas.strokeWeight(50/i);
-        canvas.strokeCap(ROUND);
         canvas.line(spring.x, spring.y, backspring.x, backspring.y);
         for (int j = 1; j < 5; j++) {
           Spring2D spring2 = (Spring2D) springs.get(i+j);
@@ -175,9 +177,9 @@ class Spring2D {
     for (int i = 0; i < 10; i++) {
      canvas.tint(0, 0, 360, vx * 100);
      //canvas.rect(x+random(-10, 10), y+random(-10, 10), radius*2, radius*2);
-     canvas.line(x+random(-10, 10), y+random(-10, 10),x+vx,x+vy);
+     //canvas.line(x+random(-10, 10), y+random(-10, 10),x+vx,x+vy);
      
-     //canvas.image(img, x+random(-10, 10), y+random(-10, 10), radius*2, radius*2);
+     canvas.image(img, x+random(-10, 10), y+random(-10, 10), radius*2, radius*2);
      }
      */
   }

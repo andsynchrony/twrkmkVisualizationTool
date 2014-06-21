@@ -65,7 +65,8 @@ void setup()
     new ThomasClass(), 
     new ChrisClass(), 
     new Polyscape(width, height), 
-    new Branches(numChannels, width, height), 
+    new Catz(),
+    new Branches(numChannels, width, height),
     new BeadWave(this), 
     new CatRobotDance(this)
     };
