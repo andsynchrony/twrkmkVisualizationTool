@@ -29,7 +29,7 @@ class Branches implements Visualization
     branches = new ArrayList();
     for (int i = 0; i < num*2; i ++) {
       randomSeed(i);
-      branches.add(new Branch2D(190+(i%4)*200, 80+(i/4)*200, 0, 0,i));
+      branches.add(new Branch2D(190+(i%4)*200, 80+(i/4)*200, 0, 0, i));
     }
     gradient = loadImage("gradient.png");
   }
@@ -51,6 +51,7 @@ class Branches implements Visualization
       branch.generate(canvas, velX, velY, gradient);
     }
     canvas.blendMode(NORMAL);
+    canvas.colorMode(RGB);
     canvas.endDraw();
   }
 
@@ -75,7 +76,7 @@ class Branch2D {
     this.dirY = dirY;
     springs = new ArrayList();
     for (int i = 0; i < numsprings; i += 5) {
-       randomSeed(int(randomVal+i*posX*posY*dirX*dirY));
+      randomSeed(int(randomVal+i*posX*posY*dirX*dirY));
       if (i==0) {
         springs.add(new Spring2D(posX, posY, mass, gravity, true));
       } else {
@@ -160,25 +161,25 @@ class Spring2D {
   }
   void display(PGraphics canvas, float nx, float ny, float velX, float velY, PImage img) {
     //canvas.noStroke();
-    canvas.stroke(0,40);
+    canvas.stroke(0, 40);
     canvas.strokeWeight(1);
 
     for (int i = 0; i < 1; i++) {
       canvas.tint(95, random(300, 360), random(100, 360), vx * 100);
       //canvas.rect(x+random(-20, 20), y+random(-20, 20), radius, radius);
       //canvas.image(img, x+random(-20, 20), y+random(-20, 20), radius, radius);
-      canvas.line(x,y,x+velX*20,y+velY*20);
+      canvas.line(x, y, x+velX*20, y+velY*20);
     }
     randomSeed(round(x*2/3));
     /*
     for (int i = 0; i < 10; i++) {
-      canvas.tint(0, 0, 360, vx * 100);
-      //canvas.rect(x+random(-10, 10), y+random(-10, 10), radius*2, radius*2);
-       canvas.line(x+random(-10, 10), y+random(-10, 10),x+vx,x+vy);
-
-      //canvas.image(img, x+random(-10, 10), y+random(-10, 10), radius*2, radius*2);
-    }
-    */
+     canvas.tint(0, 0, 360, vx * 100);
+     //canvas.rect(x+random(-10, 10), y+random(-10, 10), radius*2, radius*2);
+     canvas.line(x+random(-10, 10), y+random(-10, 10),x+vx,x+vy);
+     
+     //canvas.image(img, x+random(-10, 10), y+random(-10, 10), radius*2, radius*2);
+     }
+     */
   }
 }
 

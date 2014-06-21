@@ -100,6 +100,8 @@ class Polyscape implements Visualization
     }
 
     canvas.endShape();
+    canvas.colorMode(RGB);
+
     canvas.endDraw();
   }
   
